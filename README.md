@@ -1,2 +1,2 @@
 # Aerlen-s-Blog
-OwnBlog
+A blog for myself
