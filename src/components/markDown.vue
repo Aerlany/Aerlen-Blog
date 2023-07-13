@@ -3,7 +3,10 @@
         <mavon-editor v-model="content" ref="md" @change="change" style="min-height: 600px" />
 
         <center v-if="type"><button class="btn" @click="submit">提交</button></center>
-        <center v-if="!type"><button class="btn" @click="update">修改</button></center>
+        <center v-if="!type"><button class="btn" @click="update">修改</button>
+            <span>-----------</span>
+            <button class="btn" @click="update">删除</button>
+        </center>
 
     </div>
 </template>
@@ -20,13 +23,14 @@ export default {
     components: {
         mavonEditor
     },
-    props: ["date", "title", "type","content"],
+    props: ["date", "title", "type", "content", "id"],
     data() {
         return {
             content: '', // 输入的markdown
             html: '',    // 及时转的html
 
             tableDatas: {
+                id: "",
                 username: "",
                 date: "",
                 title: "",
@@ -45,7 +49,7 @@ export default {
             // console.log(this.content);
             // console.log(this.html);
 
-            this.tableDatas.username = "张三";
+            this.tableDatas.username = localStorage.getItem("username");
             this.tableDatas.date = this.date;
             this.tableDatas.title = this.title;
             this.tableDatas.content = this.content;
@@ -83,8 +87,8 @@ export default {
         update() {
             // console.log(this.content);
             // console.log(this.html);
-
-            this.tableDatas.username = "张三";
+            this.tableDatas.id = this.id;
+            this.tableDatas.username = localStorage.getItem("username");
             this.tableDatas.date = this.date;
             this.tableDatas.title = this.title;
             this.tableDatas.content = this.content;
@@ -94,11 +98,12 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                api.post("/pages", this.tableDatas, (resp) => {
+
+                api.put("/pages", this.tableDatas, (resp) => {
                     if (resp.data.flag) {
                         this.$message({
                             type: 'success',
-                            message: '添加成功!'
+                            message: '修改成功!'
                         });
                         setTimeout(() => {
                             window.location.reload();
@@ -106,7 +111,7 @@ export default {
                     } else if (resp.status != 200) {
                         this.$message({
                             type: 'error',
-                            message: '添加失败!'
+                            message: '修改失败!'
                         });
                     }
                 })
@@ -116,8 +121,39 @@ export default {
                     message: '已取消'
                 });
             });
-
         },
+        //删除
+        update() {
+            this.$confirm('是否提交 ?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+
+                api.del("/pages/" + this.id, "", (resp) => {
+                    if (resp.data.flag) {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else if (resp.status != 200) {
+                        this.$message({
+                            type: 'error',
+                            message: '删除失败!'
+                        });
+                    }
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消'
+                });
+            });
+        }
+
     },
     mounted() {
 

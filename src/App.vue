@@ -1,8 +1,6 @@
 <template>
   <div class="root">
-    <!-- <LoginPage></LoginPage> -->
-    <PageHead></PageHead>
-    <PageBody></PageBody>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -10,8 +8,6 @@
 import PageHead from './components/PageHead.vue'
 import PageBody from './components/PageBody.vue'
 import LoginPage from './components/LoginPage.vue'
-
-import Markdown from 'vue-meditor';
 
 
 export default {
@@ -32,7 +28,7 @@ export default {
 
 .root {
   /* display: flex; */
-  min-height: 1080px;
+  min-height: 100vh;
   background-color: #f5f7f9;
   background-repeat: repeat-y;
 }

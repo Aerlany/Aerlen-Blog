@@ -1,8 +1,11 @@
 <template>
     <!-- 文章管理 -->
     <div class="textBody">
-        <p class="title" style="font-family: 楷体; margin-bottom: 10px;">文章管理</p>
-        <div>
+        <div v-if="!isLogin">
+            <unLogin></unLogin>
+        </div>
+        <div v-if="isLogin">
+            <p class="title" style="font-family: 楷体; margin-bottom: 10px;">文章管理</p>
             <!-- 时间 和 标题 -->
             <div>
                 <el-input type="text" placeholder="请输入标题" v-model="title" clearable class="title2">
@@ -11,7 +14,7 @@
                     :picker-options="pickerOptions" value-format="yyyy-MM-dd">
                 </el-date-picker>
             </div>
-            <MarkDown :date="date" :title="title" :type="type" :content="content"></MarkDown>
+            <MarkDown :date="date" :title="title" :type="type" :content="content" :id="id"></MarkDown>
         </div>
     </div>
 </template>
@@ -19,6 +22,8 @@
 <script>
 import api from '@/api/api'
 import MarkDown from '@/components/markDown.vue';
+import unLogin from '@/components/unLogin.vue'
+
 export default {
     name: "articleManger",
     data() {
@@ -49,6 +54,7 @@ export default {
                     }
                 }]
             },
+            id: "",
             //标题
             title: "",
             //时间
@@ -57,9 +63,12 @@ export default {
             type: true,
             //内容
             content: '',
+
+            //登录验证
+            isLogin: false,
         };
     },
-    components: { MarkDown },
+    components: { MarkDown, unLogin },
     methods: {
         getMessage() {
             api.get("/pages/1/" + this.$route.query.id, "", (resp) => {
@@ -72,8 +81,18 @@ export default {
     mounted() {
         if (this.$route.query.id != undefined) {
             this.type = false;
-            this.getMessage();
+            this.id = this.$route.query.id;
+
+            //针对页面（再刷新一次）
+            setTimeout(() => {
+                this.getMessage();
+            }, 10);
         }
+
+        //检测登录状态
+        api.getUserStatus((status) => {
+            this.isLogin = status;
+        })
     },
 }
 </script>

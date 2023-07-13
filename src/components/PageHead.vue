@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 200px;">
+    <div style="height: 200px;" class="head">
         <p class="fontcss">{{ message }}</p>
         <a href="https://github.com/aerlany" class="github-corner" title="Follow me on GitHub"
             aria-label="Follow me on GitHub" rel="external nofollow" target="_blank" data-pjax-state="external">
@@ -57,6 +57,10 @@ export default {
 </script>
 
 <style scoped>
+.head {
+    /* background: linear-gradient(to top, #ffffff, #03e8f4, #ffeaea); */
+}
+
 @font-face {
     font-family: "friends font";
     src: url("@/font/Gabriel\ Weiss\'\ Friends\ Font.TTF");
@@ -70,7 +74,7 @@ export default {
 .fontcss {
     text-align: center;
     padding-top: 20px;
-    color: rgb(255, 213, 150);
+    color: rgb(73, 45, 34);
     font-family: "friends font";
     font-size: 5vw;
     /* text-shadow: 0.5vw 0.5vw 0 black; */

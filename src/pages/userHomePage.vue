@@ -1,10 +1,15 @@
 <template>
     <!-- 个人主页 -->
+
     <div>
-        <div class="box1">
+        <div v-if="!isLogin">
+            <unLogin></unLogin>
+        </div>
+        <div class="box1" v-if="isLogin">
             <transition-group v-show="isShow" name="list" appear tag="ul" class="timeLink">
                 <li v-for="timeLinkData in timeLinkDatas" :key="timeLinkData.id">
                     <div class="Link"></div>
+                    <!-- 使用transition-gruop -->
                     <transition name="biaoti" appear>
                         <section>
                             <div class="textBody">
@@ -21,36 +26,51 @@
                         </section>
                     </transition>
                 </li>
+
             </transition-group>
         </div>
-        <router-view></router-view>
+        <router-view v-if="!isShow"></router-view>
     </div>
 
 </template>
 
 <script>
 import api from '@/api/api'
+import unLogin from '@/components/unLogin.vue'
 
 export default {
+    components: { unLogin },
     name: "userHomePage",
     data() {
         return {
             timeLinkDatas: [],
             isShow: true,
+            isLogin: false
         }
     },
     methods: {
         getAll() {
             this.timeLinkDatas = [];
-            api.get("/pages/getTimeLinkMessage", "", (resp) => {
+            api.get("/pages/getTimeLinkMessage/" + localStorage.getItem("username"), "", (resp) => {
                 this.timeLinkDatas = resp.data.data;
             })
         },
 
     },
     mounted() {
+
+        this.$bus.$on("reLodeUserHomePage", () => {
+            this.isShow = true;
+        });
         this.getAll();
-    }
+
+        //检测登录状态
+        api.getUserStatus((status) => {
+            this.isLogin = status;
+        })
+
+    },
+    component: { unLogin }
 }
 </script>
 

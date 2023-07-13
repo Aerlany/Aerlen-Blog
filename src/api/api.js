@@ -28,6 +28,16 @@ const api = {
         callback && callback(res)
     },
 
+    async put(url, data, callback) {
+        let res = await axios({
+            url: url,
+            method: "PUT",
+            data: data || "",
+            // ContentType: "application/x-www-form-urlencoded"
+        })
+        callback && callback(res)
+    },
+
     async del(url, data, callback) {
         let res = await axios({
             url: url,
@@ -37,6 +47,14 @@ const api = {
         })
         callback && callback(res)
     },
+
+    getUserStatus(callback) {
+        let status = false;
+        if (localStorage.getItem("username") && localStorage.getItem("password")) {
+            status = true;
+        }
+        callback && callback(status)
+    }
 }
 export default api
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <mavon-editor v-model="content" class="two" :class="change" :toolbarsFlag="false" :editable="false"
-            :subfield="false" defaultOpen="preview" :navigation="true">
+            :subfield="false" defaultOpen="preview" :navigation="false">
         </mavon-editor>
         <center><button class="btn" @click="showAll()">阅读全文 >></button></center>
     </div>

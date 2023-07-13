@@ -3,11 +3,12 @@
         <div class="container" v-bind:class="success">
             <h1>Welcome</h1>
             <div class="form">
+
                 <input type="text" placeholder="您的账号" v-model="formData.username">
                 <input type="password" placeholder="您的密码" v-model="formData.password">
                 <button class="btn-login" @click="submit()">登录</button>
                 <button class="btn-regin" @click="regin()">注册</button>
-                <button class="btn-skip" @click="skip()">我就先看看</button>
+
             </div>
         </div>
         <ul class="bg-squares">
@@ -27,20 +28,85 @@
 </template>
 
 <script>
+import api from '@/api/api'
+
 export default {
     name: " LoginPage",
     data() {
         return {
             success: "",
             formData: {
-                username: '',
-                password: ''
+                username: "",
+                password: ""
             },
         }
     },
     methods: {
         submit() {
-            this.success = "success"
+            if (this.formData.username && this.formData.password.length >= 6) {
+                api.post("/users/addUser", this.formData, (resp) => {
+                    if (resp.data.flag == true) {
+                        this.$message({
+                            type: 'success',
+                            message: 'Welcome !!'
+                        });
+                        localStorage.setItem("username", this.formData.username);
+                        localStorage.setItem("password", this.formData.password);
+                        this.success = "success";
+                        setTimeout(() => {
+                            this.$router.push({ path: '/mainPage' });
+                        }, 2000);
+                    } else {
+                        this.$message({
+                            type: 'error',
+                            message: '登录失败!用户名或密码有误'
+                        });
+                    }
+                })
+            } else {
+                this.$message({
+                    type: 'error',
+                    message: '用户名或密码格式错误!'
+                });
+            }
+        },
+        regin() {
+            this.$confirm('是否提交 ?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                if (this.formData.username && this.formData.password.length >= 6) {
+                    api.post("/users", this.formData, (resp) => {
+                        if (resp.data.flag) {
+                            this.$message({
+                                type: 'success',
+                                message: '注册成功!!'
+                            });
+
+                        } else {
+                            this.$message({
+                                type: 'error',
+                                message: '注册失败!!'
+                            });
+                        }
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    })
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: '用户名或密码格式错误!(密码必须大于6位)'
+                    });
+                }
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消'
+                });
+            });
+
         }
     },
 } 
